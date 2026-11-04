@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1b2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FLORIYO">
+  <meta name="description" content="Gestión de cargas, agricultores y palets de FLORIYO TRANSPORTES.">
+
+  <title>FLORIYO TRANSPORTES</title>
+
+  <!-- Icono SVG integrado para evitar depender de rutas externas. -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230d1b2a'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='55' fill='%23e0a96d' font-family='Arial' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%230d1b2a'/%3E%3Ctext x='90' y='123' text-anchor='middle' font-size='105' fill='%23e0a96d' font-family='Arial' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --navy: #0d1b2a;
+      --panel: #14283b;
+      --panel-light: #1b354d;
+      --gold: #e0a96d;
+      --text: #f3f5f7;
+      --muted: #aab8c5;
+      --border: #2a4359;
+      --danger: #f08a82;
+      --success: #8ed3a8;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0 0 env(safe-area-inset-bottom);
+      background: var(--navy);
+      color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      padding: max(20px, env(safe-area-inset-top)) 20px 20px;
+      background: linear-gradient(135deg, #10243a, var(--navy));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner, main {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border: 2px solid var(--gold);
+      border-radius: 14px;
+      color: var(--gold);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gold);
+      font-size: clamp(20px, 4vw, 28px);
+      letter-spacing: .04em;
+    }
+
+    .subtitle { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+
+    main { padding: 20px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat, .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .stat { padding: 16px; }
+    .stat-label { color: var(--muted); font-size: 13px; }
+    .stat-value { display: block; margin-top: 5px; color: var(--gold); font-size: 27px; font-weight: 750; }
+
+    .card { margin: 14px 0; padding: 18px; }
+    .card h2 { margin: 0 0 14px; font-size: 19px; }
+    .card h2 span { color: var(--gold); }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section-heading h2 { margin: 0; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      align-items: end;
+      gap: 12px;
+    }
+
+    label { display: block; color: var(--muted); font-size: 13px; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 5px;
+      padding: 10px 11px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #0e2031;
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea { min-height: 78px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+    input[readonly] { color: var(--gold); font-weight: 700; }
+    button {
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--gold);
+      border-radius: 9px;
+      background: var(--gold);
+      color: #172333;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(1.06); }
+    button.secondary { background: transparent; color: var(--gold); }
+    button.danger { border-color: var(--danger); background: transparent; color: var(--danger); }
+    button.small { min-height: 34px; padding: 5px 9px; font-size: 13px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .muted { color: var(--muted); }
+    .gold { color: var(--gold); }
+    .positive { color: var(--success); }
+    .negative { color: var(--danger); }
+
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td { padding: 10px 9px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th { color: var(--gold); font-size: 13px; font-weight: 650; }
+    td { font-size: 14px; }
+    tr:last-child td { border-bottom: 0; }
+    .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    .empty { padding: 18px 5px; color: var(--muted); text-align: center; }
+    .note { margin: 9px 0 0; color: var(--muted); font-size: 13px; }
+    .status { min-height: 24px; margin: 10px 0 0; color: var(--success); font-size: 14px; }
+
+    dialog {
+      width: min(560px, calc(100% - 24px));
+      max-height: 90vh;
+      overflow: auto;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    dialog::backdrop { background: rgb(0 0 0 / 65%); }
+    dialog h2 { margin-top: 0; color: var(--gold); }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 16px; }
+
+    @media (max-width: 600px) {
+      main { padding: 14px; }
+      .card { padding: 14px; }
+      .brand-mark { width: 42px; height: 42px; flex-basis: 42px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner brand">
+      <div class="brand-mark" aria-hidden="true">F</div>
+      <div>
+        <h1>FLORIYO TRANSPORTES</h1>
+        <p class="subtitle">Gestión de cargas, agricultores y palets</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats" aria-label="Resumen">
+      <div class="stat">
+        <span class="stat-label">Agricultores</span>
+        <strong class="stat-value" id="statFarmers">0</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Cargas registradas</span>
+        <strong class="stat-value" id="statLoads">0</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Importe total de cargas</span>
+        <strong class="stat-value" id="statAmount">0,00 €</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Palets pendientes en la calle</span>
+        <strong class="stat-value" id="statPallets">0</strong>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span>01.</span> Registrar carga</h2>
+      <form id="loadForm">
+        <div class="form-grid">
+          <label>Fecha
+            <input type="date" name="date" required>
+          </label>
+          <label>Agricultor
+            <select name="farmerId" required></select>
+          </label>
+          <label>Código de porte
+            <select name="codeId" required></select>
+          </label>
+          <label>Tipo de movimiento
+            <select name="kind" required>
+              <option value="full">Género lleno — entrega palets</option>
+              <option value="empty">Envases vacíos — devuelve palets</option>
+            </select>
+          </label>
+          <label>Kilos
+            <input type="number" name="kg" min="0.01" step="0.01" placeholder="0" required>
+          </label>
+          <label>Palets
+            <input type="number" name="pallets" min="0" step="1" value="0" required>
+          </label>
+          <label>Precio por kg
+            <input type="text" name="priceDisplay" readonly value="—">
+          </label>
+          <label>Importe automático
+            <input type="text" name="amountDisplay" readonly value="0,00 €">
+          </label>
+          <label style="grid-column: 1 / -1;">Observaciones
+            <input type="text" name="note" maxlength="250" placeholder="Opcional">
+          </label>
+          <div><button type="submit">Guardar carga</button></div>
+        </div>
+      </form>
+      <p class="note">Las cargas de género lleno suman palets entregados; las de envases vacíos restan palets devueltos. El importe se calcula como kilos × precio/kg.</p>
+      <p class="status" id="loadStatus" role="status"></p>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <h2><span>02.</span> Saldo de palets por agricultor</h2>
+        <button type="button" class="secondary" data-action="new-adjustment">＋ Ajuste manual</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Agricultor</th>
+              <th>Entregados</th>
+              <th>Devueltos</th>
+              <th>Saldo pendiente</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="palletBody"></tbody>
+        </table>
+      </div>
+      <p class="note">Un ajuste manual positivo registra palets entregados; uno negativo registra palets devueltos. El saldo puede ser negativo si se han devuelto más palets de los registrados como entregados.</p>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <h2><span>03.</span> Historial de cargas y movimientos</h2>
+      </div>
+      <div class="filters">
+        <label>Desde
+          <input type="date" id="filterFrom">
+        </label>
+        <label>Hasta
+          <input type="date" id="filterTo">
+        </label>
+        <label>Agricultor
+          <select id="filterFarmer"><option value="">Todos</option></select>
+        </label>
+        <label>Buscar
+          <input type="search" id="filterSearch" placeholder="Código, observaciones...">
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Agricultor</th>
+              <th>Código / detalle</th>
+              <th>Kilos</th>
+              <th>Palets</th>
+              <th>Importe</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <h2><span>04.</span> Agricultores</h2>
+        <button type="button" data-action="new-farmer">＋ Añadir agricultor</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>Teléfono</th><th>Observaciones</th><th>Acciones</th></tr></thead>
+          <tbody id="farmerBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <h2><span>05.</span> Códigos de porte</h2>
+        <button type="button" data-action="new-code">＋ Añadir código</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Código / descripción</th><th>Precio por kg</th><th>Acciones</th></tr></thead>
+          <tbody id="codeBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="editDialog">
+    <form id="editForm">
+      <h2 id="dialogTitle">Editar</h2>
+      <div id="dialogFields" class="form-grid"></div>
+      <p class="note" id="dialogNote"></p>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" data-action="close-dialog">Cancelar</button>
+        <button type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const DB_NAME = "floriyo-transportes";
+      const DB_VERSION = 1;
+      const STORE_NAMES = ["farmers", "codes", "loads", "adjustments"];
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+      let db;
+      let state = { farmers: [], codes: [], loads: [], adjustments: [] };
+      let dialogRecord = null;
+
+      const euro = new Intl.NumberFormat("es-ES", {
+        style: "currency", currency: "EUR"
+      });
+      const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 2 });
+
+      function localDate() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function openDatabase() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+          request.onupgradeneeded = () => {
+            const database = request.result;
+            for (const store of STORE_NAMES) {
+              if (!database.objectStoreNames.contains(store)) {
+                database.createObjectStore(store, { keyPath: "id", autoIncrement: true });
+              }
+            }
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function getAll(storeName) {
+        return new Promise((resolve, reject) => {
+          const request = db.transaction(storeName, "readonly").objectStore(storeName).getAll();
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function saveRecord(storeName, record) {
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, "readwrite");
+          const store = tx.objectStore(storeName);
+          const request = record.id ? store.put(record) : store.add(record);
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function deleteRecord(storeName, id) {
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, "readwrite");
+          const request = tx.objectStore(storeName).delete(Number(id));
+          request.onsuccess = () => resolve();
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      async function refresh() {
+        const results = await Promise.all(STORE_NAMES.map(getAll));
+        state = Object.fromEntries(STORE_NAMES.map((name, i) => [name, results[i]]));
+        render();
+      }
+
+      function farmerName(id) {
+        return state.farmers.find(item => item.id === Number(id))?.name || "Agricultor eliminado";
+      }
+
+      function codeName(id) {
+        return state.codes.find(item => item.id === Number(id))?.name || "Código eliminado";
+      }
+
+      function palletTotals(farmerId) {
+        let delivered = 0;
+        let returned = 0;
+        for (const load of state.loads) {
+          if (Number(load.farmerId) !== Number(farmerId)) continue;
+          if (load.kind === "full") delivered += Number(load.pallets || 0);
+          if (load.kind === "empty") returned += Number(load.pallets || 0);
+        }
+        let adjustment = 0;
+        for (const item of state.adjustments) {
+          if (Number(item.farmerId) === Number(farmerId)) adjustment += Number(item.delta || 0);
+        }
+        return { delivered, returned, balance: delivered - returned + adjustment };
+      }
+
+      function render() {
+        renderStats();
+        renderFormOptions();
+        renderPallets();
+        renderHistory();
+        renderFarmers();
+        renderCodes();
+      }
+
+      function renderStats() {
+        const totalAmount = state.loads.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const totalBalance = state.farmers.reduce((sum, farmer) => sum + palletTotals(farmer.id).balance, 0);
+        $("#statFarmers").textContent = state.farmers.length;
+        $("#statLoads").textContent = state.loads.length;
+        $("#statAmount").textContent = euro.format(totalAmount);
+        $("#statPallets").textContent = number.format(Math.max(0, totalBalance));
+      }
+
+      function renderFormOptions() {
+        const farmerSelect = $('#loadForm select[name="farmerId"]');
+        const codeSelect = $('#loadForm select[name="codeId"]');
+        const farmerValue = farmerSelect.value;
+        const codeValue = codeSelect.value;
+
+        farmerSelect.innerHTML = `<option value="">Selecciona agricultor</option>` +
+          state.farmers.map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join("");
+        codeSelect.innerHTML = `<option value="">Selecciona código</option>` +
+          state.codes.map(item => `<option value="${item.id}">${escapeHtml(item.name)} — ${euro.format(item.pricePerKg)}/kg</option>`).join("");
+
+        if (state.farmers.some(item => String(item.id) === farmerValue)) farmerSelect.value = farmerValue;
+        if (state.codes.some(item => String(item.id) === codeValue)) codeSelect.value = codeValue;
+
+        const filter = $("#filterFarmer");
+        const filterValue = filter.value;
+        filter.innerHTML = `<option value="">Todos</option>` +
+          state.farmers.map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join("");
+        if (state.farmers.some(item => String(item.id) === filterValue)) filter.value = filterValue;
+
+        updateAmount();
+      }
+
+      function renderPallets() {
+        const body = $("#palletBody");
+        if (!state.farmers.length) {
+          body.innerHTML = `<tr><td colspan="5" class="empty">Añade agricultores para ver sus saldos de palets.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = state.farmers.map(farmer => {
+          const totals = palletTotals(farmer.id);
+          const balanceClass = totals.balance < 0 ? "negative" : "positive";
+          return `<tr>
+            <td>${escapeHtml(farmer.name)}</td>
+            <td>${number.format(totals.delivered)}</td>
+            <td>${number.format(totals.returned)}</td>
+            <td class="${balanceClass}"><strong>${number.format(totals.balance)}</strong></td>
+            <td><button class="small secondary" data-action="new-adjustment" data-farmer-id="${farmer.id}">Ajustar</button></td>
+          </tr>`;
+        }).join("");
+      }
+
+      function renderHistory() {
+        const from = $("#filterFrom").value;
+        const to = $("#filterTo").value;
+        const selectedFarmer = $("#filterFarmer").value;
+        const query = $("#filterSearch").value.trim().toLocaleLowerCase("es");
+
+        const entries = [
+          ...state.loads.map(item => ({ ...item, entryType: "load" })),
+          ...state.adjustments.map(item => ({ ...item, entryType: "adjustment" }))
+        ].filter(item => {
+          if (from && item.date < from) return false;
+          if (to && item.date > to) return false;
+          if (selectedFarmer && Number(item.farmerId) !== Number(selectedFarmer)) return false;
+          const searchable = [
+            farmerName(item.farmerId),
+            item.entryType === "load" ? codeName(item.codeId) : "ajuste manual",
+            item.note || ""
+          ].join(" ").toLocaleLowerCase("es");
+          return !query || searchable.includes(query);
+        }).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+        const body = $("#historyBody");
+        if (!entries.length) {
+          body.innerHTML = `<tr><td colspan="8" class="empty">No hay movimientos que coincidan con los filtros.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = entries.map(item => {
+          if (item.entryType === "adjustment") {
+            const delta = Number(item.delta);
+            const label = delta >= 0 ? "Ajuste: entrega" : "Ajuste: devolución";
+            return `<tr>
+              <td>${escapeHtml(item.date)}</td>
+              <td>${label}</td>
+              <td>${escapeHtml(farmerName(item.farmerId))}</td>
+              <td>${escapeHtml(item.note || "Ajuste manual")}</td>
+              <td>—</td>
+              <td class="${delta >= 0 ? "positive" : "negative"}">${delta > 0 ? "+" : ""}${number.format(delta)}</td>
+              <td>—</td>
+              <td><button class="small danger" data-action="delete-adjustment" data-id="${item.id}">Eliminar</button></td>
+            </tr>`;
+          }
+
+          const isFull = item.kind === "full";
+          return `<tr>
+            <td>${escapeHtml(item.date)}</td>
+            <td>${isFull ? "Género lleno" : "Envases vacíos"}</td>
+            <td>${escapeHtml(farmerName(item.farmerId))}</td>
+            <td>${escapeHtml(codeName(item.codeId))}${item.note ? `<br><span class="muted">${escapeHtml(item.note)}</span>` : ""}</td>
+            <td>${number.format(item.kg)} kg</td>
+            <td class="${isFull ? "positive" : "negative"}">${isFull ? "+" : "−"}${number.format(item.pallets)}</td>
+            <td>${euro.format(item.amount || 0)}</td>
+            <td><div class="actions">
+              <button class="small secondary" data-action="edit-load" data-id="${item.id}">Editar</button>
+              <button class="small danger" data-action="delete-load" data-id="${item.id}">Eliminar</button>
+            </div></td>
+          </tr>`;
+        }).join("");
+      }
+
+      function renderFarmers() {
+        const body = $("#farmerBody");
+        body.innerHTML = state.farmers.length ? state.farmers.map(item => `<tr>
+          <td>${escapeHtml(item.name)}</td>
+          <td>${escapeHtml(item.phone || "—")}</td>
+          <td>${escapeHtml(item.notes || "—")}</td>
+          <td><div class="actions">
+            <button class="small secondary" data-action="edit-farmer" data-id="${item.id}">Editar</button>
+            <button class="small danger" data-action="delete-farmer" data-id="${item.id}">Eliminar</button>
+          </div></td>
+        </tr>`).join("") : `<tr><td colspan="4" class="empty">Todavía no hay agricultores.</td></tr>`;
+      }
+
+      function renderCodes() {
+        const body = $("#codeBody");
+        body.innerHTML = state.codes.length ? state.codes.map(item => `<tr>
+          <td>${escapeHtml(item.name)}</td>
+          <td>${euro.format(item.pricePerKg)}/kg</td>
+          <td><div class="actions">
+            <button class="small secondary" data-action="edit-code" data-id="${item.id}">Editar</button>
+            <button class="small danger" data-action="delete-code" data-id="${item.id}">Eliminar</button>
+          </div></td>
+        </tr>`).join("") : `<tr><td colspan="3" class="empty">Todavía no hay códigos de porte.</td></tr>`;
+      }
+
+      function updateAmount() {
+        const form = $("#loadForm");
+        const code = state.codes.find(item => item.id === Number(form.elements.codeId.value));
+        const price = code ? Number(code.pricePerKg) : 0;
+        const kg = Number(form.elements.kg.value) || 0;
+        form.elements.priceDisplay.value = code ? `${euro.format(price)}/kg` : "—";
+        form.elements.amountDisplay.value = euro.format(kg * price);
+      }
+
+      $("#loadForm").elements.date.value = localDate();
+      $("#loadForm").addEventListener("input", updateAmount);
+      $("#loadForm").addEventListener("change", updateAmount);
+
+      $("#loadForm").addEventListener("submit", async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (!state.farmers.length || !state.codes.length) {
+          $("#loadStatus").textContent = "Primero añade al menos un agricultor y un código de porte.";
+          return;
+        }
+        const data = new FormData(form);
+        const code = state.codes.find(item => item.id === Number(data.get("codeId")));
+        const kg = Number(data.get("kg"));
+        const pallets = Number(data.get("pallets"));
+        if (!code || !Number.isFinite(kg) || kg <= 0 || !Number.isInteger(pallets) || pallets < 0) {
+          $("#loadStatus").textContent = "Revisa los kilos y el número de palets.";
+          return;
+        }
+
+        try {
+          await saveRecord("loads", {
+            date: String(data.get("date")),
+            farmerId: Number(data.get("farmerId")),
+            codeId: Number(data.get("codeId")),
+            kind: String(data.get("kind")),
+            kg,
+            pallets,
+            amount: Math.round(kg * Number(code.pricePerKg) * 100) / 100,
+            note: String(data.get("note") || "").trim()
+          });
+          form.reset();
+          form.elements.date.value = localDate();
+          form.elements.pallets.value = "0";
+          $("#loadStatus").textContent = "Carga guardada correctamente.";
+          await refresh();
+        } catch (error) {
+          console.error(error);
+          $("#loadStatus").textContent = "No se pudo guardar la carga.";
+        }
+      });
+
+      const dialog = $("#editDialog");
+      const dialogForm = $("#editForm");
+
+      function field(name, label, value = "", type = "text", options = {}) {
+        const required = options.required === false ? "" : "required";
+        const min = options.min !== undefined ? `min="${options.min}"` : "";
+        const step = options.step !== undefined ? `step="${options.step}"` : "";
+        const maxLength = options.maxLength ? `maxlength="${options.maxLength}"` : "";
+        if (type === "select") {
+          const choices = options.choices.map(([val, text]) =>
+            `<option value="${escapeHtml(val)}" ${String(value) === String(val) ? "selected" : ""}>${escapeHtml(text)}</option>`
+          ).join("");
+          return `<label>${escapeHtml(label)}<select name="${escapeHtml(name)}" ${required}>${choices}</select></label>`;
+        }
+        return `<label>${escapeHtml(label)}<input name="${escapeHtml(name)}" type="${type}" value="${escapeHtml(value)}" ${required} ${min} ${step} ${maxLength}></label>`;
+      }
+
+      function openEditor(type, record = {}) {
+        dialogRecord = { type, id: record.id || null };
+        let title = "";
+        let fields = "";
+        let note = "";
+
+        if (type === "farmer") {
+          title = record.id ? "Editar agricultor" : "Añadir agricultor";
+          fields = field("name", "Nombre", record.name || "", "text", { maxLength: 100 }) +
+            field("phone", "Teléfono", record.phone || "", "tel", { required: false, maxLength: 40 }) +
+            `<label style="grid-column:1/-1">Observaciones<textarea name="notes" maxlength="250">${escapeHtml(record.notes || "")}</textarea></label>`;
+        } else if (type === "code") {
+          title = record.id ? "Editar código de porte" : "Añadir código de porte";
+          fields = field("name", "Código / descripción", record.name || "", "text", { maxLength: 100 }) +
+            field("pricePerKg", "Precio por kg (€)", record.pricePerKg ?? "", "number", { min: "0", step: "0.0001" });
+          note = "Los cambios de precio se aplican a las nuevas cargas; las cargas existentes conservan su importe.";
+        } else if (type === "adjustment") {
+          title = "Ajuste manual de palets";
+          const farmerChoices = state.farmers.map(item => [item.id, item.name]);
+          fields = field("date", "Fecha", record.date || localDate(), "date") +
+            field("farmerId", "Agricultor", record.farmerId || "", "select", { choices: farmerChoices }) +
+            field("delta", "Palets (+ entrega / − devolución)", record.delta ?? "", "number", { step: "1" }) +
+            `<label style="grid-column:1/-1">Motivo / observaciones<textarea name="note" maxlength="250" required>${escapeHtml(record.note || "")}</textarea></label>`;
+          note = "Usa un valor positivo para palets entregados y uno negativo para palets devueltos.";
+        } else if (type === "load") {
+          title = "Editar carga";
+          const farmers = state.farmers.map(item => [item.id, item.name]);
+          const codes = state.codes.map(item => [item.id, item.name]);
+          fields = field("date", "Fecha", record.date || localDate(), "date") +
+            field("farmerId", "Agricultor", record.farmerId || "", "select", { choices: farmers }) +
+            field("codeId", "Código de porte", record.codeId || "", "select", { choices: codes }) +
+            field("kind", "Tipo", record.kind || "full", "select", { choices: [["full", "Género lleno"], ["empty", "Envases vacíos"]] }) +
+            field("kg", "Kilos", record.kg ?? "", "number", { min: "0.01", step: "0.01" }) +
+            field("pallets", "Palets", record.pallets ?? 0, "number", { min: "0", step: "1" }) +
+            `<label style="grid-column:1/-1">Observaciones<textarea name="note" maxlength="250">${escapeHtml(record.note || "")}</textarea></label>`;
+          note = "Al guardar, el importe se recalcula con el precio/kg actual del código seleccionado.";
+        }
+
+        $("#dialogTitle").textContent = title;
+        $("#dialogFields").innerHTML = fields;
+        $("#dialogNote").textContent = note;
+        dialog.showModal();
+      }
+
+      dialogForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!dialogRecord) return;
+        const data = new FormData(dialogForm);
+        const value = Object.fromEntries(data.entries());
+
+        try {
+          if (dialogRecord.type === "farmer") {
+            await saveRecord("farmers", {
+              ...(dialogRecord.id ? { id: dialogRecord.id } : {}),
+              name: String(value.name).trim(),
+              phone: String(value.phone || "").trim(),
+              notes: String(value.notes || "").trim()
+            });
+          } else if (dialogRecord.type === "code") {
+            const price = Number(value.pricePerKg);
+            if (!Number.isFinite(price) || price < 0) throw new Error("Precio no válido");
+            await saveRecord("codes", {
+              ...(dialogRecord.id ? { id: dialogRecord.id } : {}),
+              name: String(value.name).trim(),
+              pricePerKg: price
+            });
+          } else if (dialogRecord.type === "adjustment") {
+            const delta = Number(value.delta);
+            if (!Number.isInteger(delta) || delta === 0) throw new Error("Indica un ajuste entero distinto de cero");
+            await saveRecord("adjustments", {
+              date: String(value.date),
+              farmerId: Number(value.farmerId),
+              delta,
+              note: String(value.note).trim()
+            });
+          } else if (dialogRecord.type === "load") {
+            const code = state.codes.find(item => item.id === Number(value.codeId));
+            const kg = Number(value.kg);
+            const pallets = Number(value.pallets);
+            if (!code || !Number.isFinite(kg) || kg <= 0 || !Number.isInteger(pallets) || pallets < 0) {
+              throw new Error("Revisa los kilos, el código y los palets.");
+            }
+            await saveRecord("loads", {
+              id: dialogRecord.id,
+              date: String(value.date),
+              farmerId: Number(value.farmerId),
+              codeId: Number(value.codeId),
+              kind: String(value.kind),
+              kg,
+              pallets,
+              amount: Math.round(kg * Number(code.pricePerKg) * 100) / 100,
+              note: String(value.note || "").trim()
+            });
+          }
+
+          dialog.close();
+          await refresh();
+        } catch (error) {
+          alert(error.message || "No se pudo guardar el registro.");
+        }
+      });
+
+      document.addEventListener("click", async event => {
+        const button = event.target.closest("[data-action]");
+        if (!button) return;
+        const action = button.dataset.action;
+        const id = Number(button.dataset.id);
+
+        if (action === "close-dialog") {
+          dialog.close();
+          return;
+        }
+        if (action === "new-farmer") return openEditor("farmer");
+        if (action === "new-code") return openEditor("code");
+        if (action === "new-adjustment") {
+          if (!state.farmers.length) return alert("Añade primero un agricultor.");
+          return openEditor("adjustment", { farmerId: button.dataset.farmerId || "", date: localDate() });
+        }
+        if (action === "edit-farmer") return openEditor("farmer", state.farmers.find(item => item.id === id));
+        if (action === "edit-code") return openEditor("code", state.codes.find(item => item.id === id));
+        if (action === "edit-load") return openEditor("load", state.loads.find(item => item.id === id));
+
+        if (action === "delete-load") {
+          if (confirm("¿Eliminar esta carga? También se actualizará el saldo de palets.")) {
+            await deleteRecord("loads", id);
+            await refresh();
+          }
+        }
+        if (action === "delete-adjustment") {
+          if (confirm("¿Eliminar este ajuste manual de palets?")) {
+            await deleteRecord("adjustments", id);
+            await refresh();
+          }
+        }
+        if (action === "delete-farmer") {
+          const hasRecords = state.loads.some(item => Number(item.farmerId) === id) ||
+            state.adjustments.some(item => Number(item.farmerId) === id);
+          if (hasRecords) return alert("No se puede eliminar: el agricultor tiene cargas o movimientos de palets asociados.");
+          if (confirm("¿Eliminar este agricultor?")) {
+            await deleteRecord("farmers", id);
+            await refresh();
+          }
+        }
+        if (action === "delete-code") {
+          const hasLoads = state.loads.some(item => Number(item.codeId) === id);
+          if (hasLoads) return alert("No se puede eliminar: el código está asociado a cargas existentes.");
+          if (confirm("¿Eliminar este código de porte?")) {
+            await deleteRecord("codes", id);
+            await refresh();
+          }
+        }
+      });
+
+      ["#filterFrom", "#filterTo", "#filterFarmer", "#filterSearch"].forEach(selector => {
+        $(selector).addEventListener("input", renderHistory);
+        $(selector).addEventListener("change", renderHistory);
+      });
+
+      async function start() {
+        if (!("indexedDB" in window)) {
+          alert("Este navegador no permite utilizar IndexedDB.");
+          return;
+        }
+        try {
+          db = await openDatabase();
+          await refresh();
+        } catch (error) {
+          console.error(error);
+          alert("No se pudo abrir la base de datos local. Comprueba los permisos del navegador.");
+        }
+      }
+
+      start();
+    })();
+  </script>
+</body>
+</html>
